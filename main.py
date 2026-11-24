@@ -42,6 +42,14 @@ def main() -> None:
         written = f.read()
     if written != LINE:
         raise SystemExit("entry.txt does not match the approved line")
+    # Gate the written file itself, not only the constant: the scorer
+    # counts the file's characters, so a future edit that pushed LINE
+    # past 140 characters (or to blank) must fail loudly here, at run
+    # time, instead of silently producing an entry the gate refuses.
+    if not 1 <= len(written) <= MAX_CHARS:
+        raise SystemExit(f"entry.txt is {len(written)} chars, must be 1-{MAX_CHARS}")
+    if "\n" in written or "\r" in written:
+        raise SystemExit("entry.txt must be a single line")
 
 
 if __name__ == "__main__":
